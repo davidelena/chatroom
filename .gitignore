@@ -1,0 +1,14 @@
+/vendor/*
+/bin
+/data/*
+*/log/*
+*.log
+log/
+mock/
+/.idea
+*.gen.go
+*/*dque
+
+# Can tolerate the compiled proto since they won't be changed
+# when recompile from same proto. But this file is so annoying.
+gen/manifest.yaml

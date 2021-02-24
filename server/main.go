@@ -43,9 +43,9 @@ func serverProcessLogin(conn net.Conn, msg *message.Message) (err error) {
 
 	var loginResMes message.LoginResMes
 	if loginMes.UserId == 100 && loginMes.UserPwd == "123456" {
-		loginResMes.Code = 200
+		loginResMes.Code = message.SuccessCode
 	} else {
-		loginResMes.Code = 401
+		loginResMes.Code = message.UserOrPasswordInvalid
 		loginResMes.Error = "用户名或密码错误"
 	}
 

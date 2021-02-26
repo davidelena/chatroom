@@ -1,15 +1,9 @@
 package main
 
 import (
-	"chatroom/redis"
+	"chatroom/client/process"
 	"fmt"
 	"os"
-)
-
-
-const (
-	Network         = "tcp"
-	Address         = "127.0.0.1:8081"
 )
 
 var (
@@ -37,29 +31,29 @@ func initChatroom() {
 		switch choice {
 		case 1:
 			fmt.Println("登录聊天室")
-			loop = false
+			fmt.Println("请输入您的用户id:")
+			fmt.Scanf("%d\n", &userId)
+			fmt.Println("请输入您的用户密码:")
+			fmt.Scanf("%s\n", &userPwd)
+			userProcessor := process.UserProcessor{}
+			userProcessor.Login(userId, userPwd)
 		case 2:
 			fmt.Println("注册新用户")
-			loop = false
 		case 3:
 			fmt.Println("退出聊天室")
-			loop = false
+			os.Exit(0)
 		default:
 			fmt.Println("您的输入有误，请重新输入")
 		}
 	}
 
-	if choice == 1 {
-		fmt.Println("请输入您的用户id:")
-		fmt.Scanf("%d\n", &userId)
-		fmt.Println("请输入您的用户密码:")
-		fmt.Scanf("%s\n", &userPwd)
-		login(userId, userPwd)
-	} else if choice == 2 {
-		fmt.Println("执行注册新用户步骤")
-		redis.RedisPingpong()
-	} else {
-		fmt.Println("执行退出聊天室")
-		os.Exit(0)
-	}
+	//if choice == 1 {
+	//
+	//} else if choice == 2 {
+	//	fmt.Println("执行注册新用户步骤")
+	//	redis.RedisPingpong()
+	//} else {
+	//	fmt.Println("执行退出聊天室")
+	//	os.Exit(0)
+	//}
 }

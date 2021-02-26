@@ -1,4 +1,4 @@
-package util
+package utils
 
 import (
 	"chatroom/common/message"
@@ -9,31 +9,35 @@ import (
 	"net"
 )
 
+type Transfer struct {
+	Conn net.Conn
+	Buf  [8096]byte // This is the buffer which will be used in the transfer
+}
+
 /**
 Read Message data from tcp connection
 */
-func ReadPkg(conn net.Conn) (mes message.Message, err error) {
-	buf := make([]byte, 8096)
+func (this *Transfer) ReadPkg() (mes message.Message, err error) {
 	fmt.Println("读取客户端发送的数据...")
 	// 只有在conn在没有关闭情况下才会阻塞，如果任意一方关闭则直接不阻塞
-	_, err = conn.Read(buf[:4])
+	_, err = this.Conn.Read(this.Buf[:4])
 	if err != nil {
 		//err = errors.New("read pkg header error")
 		return
 	}
 
 	var pkgLen uint32
-	pkgLen = binary.BigEndian.Uint32(buf[0:4])
+	pkgLen = binary.BigEndian.Uint32(this.Buf[0:4])
 	fmt.Println("pkgLen=", pkgLen)
 	//Read data about 0~pkgLen from connection into buf bytes array
-	n, err := conn.Read(buf[:pkgLen])
+	n, err := this.Conn.Read(this.Buf[:pkgLen])
 	fmt.Println("readN=", n)
 	if n != int(pkgLen) || err != nil {
 		err = errors.New("read pkg body error")
 		return
 	}
 
-	err = json.Unmarshal(buf[:pkgLen], &mes)
+	err = json.Unmarshal(this.Buf[:pkgLen], &mes)
 	if err != nil {
 		fmt.Println("json.Unmarshal error=", err)
 		return
@@ -43,19 +47,18 @@ func ReadPkg(conn net.Conn) (mes message.Message, err error) {
 
 /**
 Write Message data into tcp connection
- */
-func WritePkg(conn net.Conn, data []byte) (err error) {
+*/
+func (this *Transfer) WritePkg(data []byte) (err error) {
 	var pkgLen uint32
 	pkgLen = uint32(len(data))
-	var buf [4]byte
-	binary.BigEndian.PutUint32(buf[0:4], pkgLen)
-	n, err := conn.Write(buf[:4])
+	binary.BigEndian.PutUint32(this.Buf[0:4], pkgLen)
+	n, err := this.Conn.Write(this.Buf[:4])
 	if n != 4 || err != nil {
 		fmt.Println("conn.Write header fail", err)
 		return
 	}
 
-	_, err = conn.Write(data)
+	_, err = this.Conn.Write(data)
 	if err != nil {
 		fmt.Println("conn.Write body fail", err)
 		return

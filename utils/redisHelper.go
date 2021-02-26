@@ -1,4 +1,4 @@
-package redis
+package utils
 
 import (
 	"context"
@@ -33,4 +33,15 @@ func GetRedisClient() *redis.Client {
 	}
 	client := redis.NewClient(redisOptions)
 	return client
+}
+
+func GetRedisClientPool() *redis.Client {
+	redisOptions := &redis.Options{
+		Addr:         "localhost:6379",
+		DB:           0,
+		PoolSize:     12,
+		MinIdleConns: 2,
+		IdleTimeout:  time.Second,
+	}
+	redis.NewClient()
 }

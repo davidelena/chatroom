@@ -1,14 +1,22 @@
-package main
+package process
 
 import (
-	util "chatroom/common"
-	message "chatroom/common/message"
+	"chatroom/common/message"
+	"chatroom/utils"
 	"encoding/json"
 	"fmt"
 	"net"
 )
 
-func login(userId int, userPwd string) (err error) {
+const (
+	Network = "tcp"
+	Address = "127.0.0.1:8081"
+)
+
+type UserProcessor struct {
+}
+
+func (this *UserProcessor) Login(userId int, userPwd string) (err error) {
 	fmt.Printf("userId: %d, userPwd: %s\n", userId, userPwd)
 
 	// Dial to special address
@@ -41,11 +49,14 @@ func login(userId int, userPwd string) (err error) {
 	}
 
 	// Write the data length first
-	util.WritePkg(conn, data)
+	tf := &utils.Transfer{
+		Conn: conn,
+	}
+	tf.WritePkg(data)
 	fmt.Printf("客户端发送消息成功, 发送长度:%v, 发送内容:%v\n", len(data), string(data))
 
 	// Read the response data from connection
-	msg, err := util.ReadPkg(conn)
+	msg, err := tf.ReadPkg()
 	if err != nil {
 		fmt.Println("客户端获取响应结果出错")
 		return
@@ -59,12 +70,28 @@ func login(userId int, userPwd string) (err error) {
 	}
 
 	if loginResMes.Code == 200 {
-		fmt.Println("登录成功")
-
+		//隐藏启动goroutine保持和服务端的通讯，如果服务端有数据推送给客户端需要保持联系
+		go serverProcessMes(conn)
+		//显示菜单
+		ShowMenu()
 	} else if loginResMes.Code == 401 {
 		fmt.Println("登录失败，用户名或密码不正确")
 	} else {
 		fmt.Println("系统异常")
 	}
 	return nil
+}
+
+func serverProcessMes(conn net.Conn) {
+	transfer := &utils.Transfer{
+		Conn: conn,
+	}
+	for {
+		mes, err := transfer.ReadPkg()
+		if err != nil {
+			fmt.Println("服务器端readPkg出错err=", err)
+			return
+		}
+		fmt.Printf("mes=%v", mes)
+	}
 }

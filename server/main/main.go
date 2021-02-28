@@ -1,10 +1,11 @@
 package main
 
 import (
+	"chatroom/server/model"
 	process "chatroom/server/process"
 	"chatroom/utils"
+	"context"
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"io"
 	"net"
 )
@@ -14,22 +15,20 @@ const (
 	Address = "127.0.0.1:8081"
 )
 
-var (
-	redisClient *redis.Client
-)
-
-func init() {
-	redisClient = utils.GetRedisClient()
+func initConfig(ctx context.Context) {
+	utils.InitRedisClient()
+	model.MyUserDao = model.NewUserDao(ctx, utils.RedisCli)
 }
 
 func main() {
+	ctx := context.Background()
 	fmt.Println("服务端在8081端口监听...")
 	listener, err := net.Listen(Network, Address)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-
+	initConfig(ctx)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {

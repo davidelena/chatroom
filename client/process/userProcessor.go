@@ -76,6 +76,8 @@ func (this *UserProcessor) Login(userId int, userPwd string) (err error) {
 		ShowMenu()
 	} else if loginResMes.Code == 401 {
 		fmt.Println("登录失败，用户名或密码不正确")
+	} else if loginResMes.Code == 402 {
+		fmt.Println("用户不存在")
 	} else {
 		fmt.Println("系统异常")
 	}

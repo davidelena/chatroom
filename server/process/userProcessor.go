@@ -2,6 +2,7 @@ package process
 
 import (
 	"chatroom/common/message"
+	"chatroom/server/model"
 	"chatroom/utils"
 	"encoding/json"
 	"fmt"
@@ -21,11 +22,22 @@ func (this *UserProcessor) ServerProcessLogin(msg *message.Message) (err error) 
 	}
 
 	var loginResMes message.LoginResMes
-	if loginMes.UserId == 100 && loginMes.UserPwd == "123456" {
-		loginResMes.Code = message.SuccessCode
+
+	user, err := model.MyUserDao.Login(loginMes.UserId, loginMes.UserPwd)
+	if err != nil {
+		if err == model.ERROR_USER_NOT_EXIST {
+			loginResMes.Code = message.UserNotExist
+			loginResMes.Error = err.Error()
+		} else if err == model.ERROR_USER_PASSWORD {
+			loginResMes.Code = message.UserOrPasswordInvalid
+			loginResMes.Error = err.Error()
+		} else {
+			loginResMes.Code = message.ServerError
+			loginResMes.Error = err.Error()
+		}
 	} else {
-		loginResMes.Code = message.UserOrPasswordInvalid
-		loginResMes.Error = "用户名或密码错误"
+		loginResMes.Code = message.SuccessCode
+		fmt.Printf("user[%v, %v] login successfully", user.UserId, user.UserName)
 	}
 
 	data, err := json.Marshal(loginResMes)

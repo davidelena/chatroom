@@ -1,29 +1,27 @@
 package utils
 
 import (
-	"context"
-	"fmt"
 	"github.com/go-redis/redis/v8"
 	"time"
 )
 
 var (
-	ctx = context.Background()
+	RedisCli *redis.Client
 )
 
-func RedisPingpong() {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
-
-	pong, err := rdb.Ping(ctx).Result()
-	fmt.Println(pong, err)
-	// Output: PONG <nil>
+func InitRedisClient() *redis.Client {
+	redisOptions := &redis.Options{
+		Addr:         "localhost:6379",
+		DB:           0,
+		PoolSize:     12,
+		MinIdleConns: 2,
+		IdleTimeout:  time.Second,
+	}
+	RedisCli = redis.NewClient(redisOptions)
+	return RedisCli
 }
 
-func GetRedisClient() *redis.Client {
+func GerRedisClient() *redis.Client {
 	redisOptions := &redis.Options{
 		Addr:         "localhost:6379",
 		DB:           0,

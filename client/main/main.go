@@ -46,14 +46,4 @@ func initChatroom() {
 			fmt.Println("您的输入有误，请重新输入")
 		}
 	}
-
-	//if choice == 1 {
-	//
-	//} else if choice == 2 {
-	//	fmt.Println("执行注册新用户步骤")
-	//	redis.RedisPingpong()
-	//} else {
-	//	fmt.Println("执行退出聊天室")
-	//	os.Exit(0)
-	//}
 }

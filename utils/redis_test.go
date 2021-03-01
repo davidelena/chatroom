@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"chatroom/common/message"
 	"chatroom/server/model"
 	"context"
 	"fmt"
@@ -84,6 +85,24 @@ func TestLoginUserPwdIncorrect(t *testing.T) {
 	if err != nil {
 		assert.EqualError(t, err, model.ERROR_USER_PASSWORD.Error())
 		t.Log(user1)
+		return
+	}
+}
+
+func TestRegisterUserSuccess(t *testing.T) {
+	ctx := context.Background()
+	redisCli := GerRedisClient()
+	defer redisCli.Close()
+	userDao := model.NewUserDao(ctx, redisCli)
+
+	user := &message.User{
+		UserId:   200,
+		UserPwd:  "12345678",
+		UserName: "daviddai",
+	}
+	err := userDao.Register(user)
+	if err != nil {
+		assert.EqualError(t, err, model.ERROR_USER_PASSWORD.Error())
 		return
 	}
 }

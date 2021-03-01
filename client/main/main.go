@@ -7,8 +7,9 @@ import (
 )
 
 var (
-	userId  int
-	userPwd string
+	userId   int
+	userPwd  string
+	userName string
 )
 
 func main() {
@@ -39,6 +40,14 @@ func initChatroom() {
 			userProcessor.Login(userId, userPwd)
 		case 2:
 			fmt.Println("注册新用户")
+			fmt.Println("请输入您的用户id:")
+			fmt.Scanf("%d\n", &userId)
+			fmt.Println("请输入您的用户名:")
+			fmt.Scanf("%s\n", &userName)
+			fmt.Println("请输入您的用户密码:")
+			fmt.Scanf("%s\n", &userPwd)
+			userProcessor := process.UserProcessor{}
+			userProcessor.Register(userId, userName, userPwd)
 		case 3:
 			fmt.Println("退出聊天室")
 			os.Exit(0)

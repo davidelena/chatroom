@@ -9,6 +9,7 @@ const (
 	SuccessCode           = 200
 	UserOrPasswordInvalid = 401
 	UserNotExist          = 402
+	UserRegisterExisted   = 403
 	ServerError           = 500
 )
 
@@ -26,4 +27,13 @@ type LoginMes struct {
 type LoginResMes struct {
 	Code  int    `json:"code"`
 	Error string `json:"error"`
+}
+
+type RegisterMes struct {
+	UserVO *User `json:user`
+}
+
+type RegisterResMes struct {
+	Code  int    `json:"code"`
+	Error string `json:error`
 }

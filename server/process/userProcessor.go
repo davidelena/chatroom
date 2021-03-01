@@ -62,5 +62,46 @@ func (this *UserProcessor) ServerProcessLogin(msg *message.Message) (err error) 
 }
 
 func (this *UserProcessor) ServerProcessRegister(msg *message.Message) (err error) {
-	return nil
+	var registerMes message.RegisterMes
+	err = json.Unmarshal([]byte(msg.Data), &registerMes)
+	if err != nil {
+		fmt.Println("json.Unmarshal loginMes error=", err)
+		return err
+	}
+
+	var registerResMes message.LoginResMes
+
+	err = model.MyUserDao.Register(registerMes.UserVO)
+	if err != nil {
+		if err == model.ERROR_USER_EXISTS {
+			registerResMes.Code = message.UserRegisterExisted
+			registerResMes.Error = err.Error()
+		} else {
+			registerResMes.Code = message.ServerError
+			registerResMes.Error = err.Error()
+		}
+	} else {
+		registerResMes.Code = message.SuccessCode
+		fmt.Printf("user[%v, %v] login successfully", registerMes.UserVO.UserId, registerMes.UserVO.UserName)
+	}
+
+	data, err := json.Marshal(registerResMes)
+	if err != nil {
+		fmt.Println("json.Marshal(loginResMes) is error=", err)
+		return
+	}
+
+	var resMsg message.Message
+	resMsg.Type = message.LoginResMesType
+	resMsg.Data = string(data)
+
+	data, err = json.Marshal(resMsg)
+	if err != nil {
+		fmt.Println("json.Marshal(resMsg) error=", err)
+	}
+	transfer := &utils.Transfer{
+		Conn: this.Conn,
+	}
+	transfer.WritePkg(data)
+	return
 }

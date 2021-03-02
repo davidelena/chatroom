@@ -138,6 +138,9 @@ func (this *UserProcessor) Login(userId int, userPwd string) (err error) {
 	}
 
 	if loginResMes.Code == message.SuccessCode {
+		for _, userId := range loginResMes.UserIds {
+			fmt.Printf("用户id:[%v]\t\n", userId)
+		}
 		//隐藏启动goroutine保持和服务端的通讯，如果服务端有数据推送给客户端需要保持联系
 		go serverProcessMes(conn)
 		//显示菜单

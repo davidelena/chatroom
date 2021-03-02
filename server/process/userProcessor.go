@@ -10,7 +10,8 @@ import (
 )
 
 type UserProcessor struct {
-	Conn net.Conn
+	UserId int
+	Conn   net.Conn
 }
 
 func (this *UserProcessor) ServerProcessLogin(msg *message.Message) (err error) {
@@ -37,7 +38,12 @@ func (this *UserProcessor) ServerProcessLogin(msg *message.Message) (err error) 
 		}
 	} else {
 		loginResMes.Code = message.SuccessCode
-		fmt.Printf("user[%v, %v] login successfully", user.UserId, user.UserName)
+		this.UserId = loginMes.UserId
+		UserManager.AddOrUpdateOnlineUser(this)
+		for id, _ := range UserManager.OnlineUsers {
+			loginResMes.UserIds = append(loginResMes.UserIds, id)
+		}
+		fmt.Printf("user[%v, %v] login successfully\n", user.UserId, user.UserName)
 	}
 
 	data, err := json.Marshal(loginResMes)

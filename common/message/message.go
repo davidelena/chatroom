@@ -6,12 +6,20 @@ const (
 	LoginResMesType    = "LoginResMes"
 	RegisterResMesType = "RegisterResMes"
 
+	OnlineStatus  = 1
+	OfflineStatus = 0
+
 	SuccessCode           = 200
 	UserOrPasswordInvalid = 401
 	UserNotExist          = 402
 	UserRegisterExisted   = 403
 	ServerError           = 500
 )
+
+type NotifyUserStatusMes struct {
+	UserId int `json:"userId"`
+	Status int `json:status`
+}
 
 type Message struct {
 	Type string `json:"type"`
@@ -25,8 +33,9 @@ type LoginMes struct {
 }
 
 type LoginResMes struct {
-	Code  int    `json:"code"`
-	Error string `json:"error"`
+	Code    int    `json:"code"`
+	Error   string `json:"error"`
+	UserIds []int  `json:"userIds"`
 }
 
 type RegisterMes struct {

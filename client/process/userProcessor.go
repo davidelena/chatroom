@@ -143,11 +143,17 @@ func (this *UserProcessor) Login(userId int, userPwd string) (err error) {
 				continue
 			}
 			fmt.Printf("用户id:[%v]\t\n", userId)
+			// set online user to the custom storage map
+			onlineUser := &message.User{
+				UserId: uid,
+				Status: message.UserOnline,
+			}
+			OnlineUsers[uid] = onlineUser
 		}
 		//隐藏启动goroutine保持和服务端的通讯，如果服务端有数据推送给客户端需要保持联系
 		go serverProcessMes(conn)
 		//显示菜单
-		ShowMenu()
+		ShowMenu(loginMes.UserId)
 	} else if loginResMes.Code == message.UserOrPasswordInvalid {
 		fmt.Println("登录失败，用户名或密码不正确")
 	} else if loginResMes.Code == message.UserNotExist {
@@ -168,6 +174,19 @@ func serverProcessMes(conn net.Conn) {
 			fmt.Println("服务器端readPkg出错err=", err)
 			return
 		}
-		fmt.Printf("mes=%v", mes)
+		fmt.Printf("mes=%v\n", mes)
+		switch mes.Type {
+		case message.NotifyUserStatusMesType:
+			var notifyUserStatusMes message.NotifyUserStatusMes
+			err := json.Unmarshal([]byte(mes.Data), &notifyUserStatusMes)
+			if err != nil {
+				fmt.Println("json.Unmarshal err=", err)
+				return
+			}
+			updateUserStatus(&notifyUserStatusMes)
+		default:
+			fmt.Println("不能识别相关的消息类型, mes.Type=", mes.Type)
+			return
+		}
 	}
 }

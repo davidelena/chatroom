@@ -5,9 +5,9 @@ import (
 	"os"
 )
 
-func ShowMenu() {
+func ShowMenu(userId int) {
 	for {
-		fmt.Println("---------------恭喜xxx登录成功---------------")
+		fmt.Printf("---------------恭喜用户%d登录成功---------------\n", userId)
 		fmt.Println("---------------1. 显示在线用户列表---------------")
 		fmt.Println("---------------2. 发送消息---------------")
 		fmt.Println("---------------3. 信息列表---------------")
@@ -16,7 +16,8 @@ func ShowMenu() {
 		fmt.Scanf("%d\n", &key)
 		switch key {
 		case 1:
-			fmt.Println("显示在线用户列表")
+			//fmt.Println("显示在线用户列表")
+			outputOnlineUsers()
 		case 2:
 			fmt.Println("发送消息")
 		case 3:

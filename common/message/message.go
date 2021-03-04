@@ -1,13 +1,15 @@
 package message
 
 const (
-	LoginMesType       = "LoginMes"
-	RegisterMesType    = "RegisterMes"
-	LoginResMesType    = "LoginResMes"
-	RegisterResMesType = "RegisterResMes"
+	LoginMesType            = "LoginMes"
+	RegisterMesType         = "RegisterMes"
+	LoginResMesType         = "LoginResMes"
+	RegisterResMesType      = "RegisterResMes"
+	NotifyUserStatusMesType = "NotifyUserStatusMesType"
 
-	OnlineStatus  = 1
-	OfflineStatus = 0
+	UserOffline = 1
+	UserOnline  = 2
+	UserBusy    = 3
 
 	SuccessCode           = 200
 	UserOrPasswordInvalid = 401

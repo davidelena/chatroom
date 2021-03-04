@@ -138,7 +138,10 @@ func (this *UserProcessor) Login(userId int, userPwd string) (err error) {
 	}
 
 	if loginResMes.Code == message.SuccessCode {
-		for _, userId := range loginResMes.UserIds {
+		for _, uid := range loginResMes.UserIds {
+			if uid == userId {
+				continue
+			}
 			fmt.Printf("用户id:[%v]\t\n", userId)
 		}
 		//隐藏启动goroutine保持和服务端的通讯，如果服务端有数据推送给客户端需要保持联系

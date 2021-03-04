@@ -38,8 +38,11 @@ func (this *UserProcessor) ServerProcessLogin(msg *message.Message) (err error) 
 		}
 	} else {
 		loginResMes.Code = message.SuccessCode
+		// login userId set to the this.UserId
 		this.UserId = loginMes.UserId
 		UserManager.AddOrUpdateOnlineUser(this)
+		// notify other online users current login user is online
+		this.NotifyOtherOnlineUsers(loginMes.UserId)
 		for id, _ := range UserManager.OnlineUsers {
 			loginResMes.UserIds = append(loginResMes.UserIds, id)
 		}
@@ -65,6 +68,50 @@ func (this *UserProcessor) ServerProcessLogin(msg *message.Message) (err error) 
 	}
 	transfer.WritePkg(data)
 	return
+}
+
+func (this *UserProcessor) NotifyOtherOnlineUsers(userId int) {
+	userMap := UserManager.OnlineUsers
+	for uid, up := range userMap {
+		if uid == userId {
+			continue
+		}
+		up.NotifyMeOnline(userId)
+	}
+}
+
+func (this *UserProcessor) NotifyMeOnline(userId int) {
+	var msg message.Message
+	msg.Type = message.NotifyUserStatusMesType
+
+	var notifyUserStatusMes message.NotifyUserStatusMes
+	notifyUserStatusMes.UserId = userId
+	notifyUserStatusMes.Status = message.UserOnline
+
+	data, err := json.Marshal(notifyUserStatusMes)
+	if err != nil {
+		fmt.Println("json.Marshal err=", err)
+		return
+	}
+
+	msg.Data = string(data)
+
+	msgData, msgErr := json.Marshal(msg)
+	if msgErr != nil {
+		fmt.Println("json.Marshal err=", msgErr)
+		return
+	}
+
+	transfer := &utils.Transfer{
+		Conn: this.Conn,
+	}
+
+	transferErr := transfer.WritePkg(msgData)
+	if transferErr != nil {
+		fmt.Println("transfer.WritePkg err=", transferErr)
+		return
+	}
+
 }
 
 func (this *UserProcessor) ServerProcessRegister(msg *message.Message) (err error) {
@@ -98,7 +145,7 @@ func (this *UserProcessor) ServerProcessRegister(msg *message.Message) (err erro
 	}
 
 	var resMsg message.Message
-	resMsg.Type = message.LoginResMesType
+	resMsg.Type = message.RegisterResMesType
 	resMsg.Data = string(data)
 
 	data, err = json.Marshal(resMsg)

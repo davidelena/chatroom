@@ -12,7 +12,7 @@ var (
 func outputOnlineUsers() {
 	fmt.Println("当前在线用户列表")
 	for uid, _ := range OnlineUsers {
-		fmt.Printf("用户[%d]登录了\n", uid)
+		fmt.Printf("用户id[%d]\n", uid)
 	}
 }
 

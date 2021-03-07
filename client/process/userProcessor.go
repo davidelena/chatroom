@@ -138,6 +138,11 @@ func (this *UserProcessor) Login(userId int, userPwd string) (err error) {
 	}
 
 	if loginResMes.Code == message.SuccessCode {
+		//initialize the current user
+		CurrentUser.UserId = userId
+		CurrentUser.Status = message.UserOnline
+		CurrentUser.Conn = conn
+
 		for _, uid := range loginResMes.UserIds {
 			if uid == userId {
 				continue
@@ -184,6 +189,8 @@ func serverProcessMes(conn net.Conn) {
 				return
 			}
 			updateUserStatus(&notifyUserStatusMes)
+		case message.SmsTransferMesType:
+			outputGroupMes(&mes)
 		default:
 			fmt.Println("不能识别相关的消息类型, mes.Type=", mes.Type)
 			return

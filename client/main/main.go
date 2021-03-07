@@ -28,7 +28,6 @@ func initChatroom() {
 		fmt.Println("请选择1-3:")
 
 		fmt.Scanf("%d\n", &choice)
-
 		switch choice {
 		case 1:
 			fmt.Println("登录聊天室")

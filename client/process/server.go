@@ -13,13 +13,16 @@ func ShowMenu(userId int) {
 		fmt.Println("---------------3. 信息列表---------------")
 		fmt.Println("---------------请选择（1-4）:---------------")
 		var key int
+		var content string
+		smsProcessor := &SmsProcessor{}
 		fmt.Scanf("%d\n", &key)
 		switch key {
 		case 1:
-			//fmt.Println("显示在线用户列表")
 			outputOnlineUsers()
 		case 2:
-			fmt.Println("发送消息")
+			fmt.Println("你想发送什么消息")
+			fmt.Scanf("%s\n", &content)
+			smsProcessor.SendSmsGroupMes(content)
 		case 3:
 			fmt.Println("显示信息列表")
 		case 4:

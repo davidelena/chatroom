@@ -6,6 +6,8 @@ const (
 	LoginResMesType         = "LoginResMes"
 	RegisterResMesType      = "RegisterResMes"
 	NotifyUserStatusMesType = "NotifyUserStatusMesType"
+	SmsMesType              = "SmsMesType"
+	SmsTransferMesType      = "SmsTransferMesType"
 
 	UserOffline = 1
 	UserOnline  = 2
@@ -47,4 +49,14 @@ type RegisterMes struct {
 type RegisterResMes struct {
 	Code  int    `json:"code"`
 	Error string `json:error`
+}
+
+type SmsMes struct {
+	User
+	Content string
+}
+
+type SmsTransferMes struct {
+	User
+	Content string
 }

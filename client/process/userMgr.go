@@ -7,6 +7,7 @@ import (
 
 var (
 	OnlineUsers = make(map[int]*message.User, 10)
+	CurrentUser message.CurrUser
 )
 
 func outputOnlineUsers() {

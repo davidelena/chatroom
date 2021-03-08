@@ -22,8 +22,11 @@ func (this *Processor) serverProcessMes(msg *message.Message) (err error) {
 		userProcessor := &UserProcessor{Conn: this.Conn}
 		err = userProcessor.ServerProcessRegister(msg)
 	case message.SmsMesType:
-		smsProcessor := &SmsProcessor{}
+		smsProcessor := &SmsProcessor{Conn: this.Conn}
 		smsProcessor.SendSmsGroupMes(msg)
+	case message.SmsMesPrivateType:
+		smsProcessor := &SmsProcessor{Conn: this.Conn}
+		smsProcessor.SendSmsPrivateMes(msg)
 	default:
 		fmt.Println("消息类型不正确，请确认...")
 	}

@@ -9,6 +9,9 @@ const (
 	SmsMesType              = "SmsMesType"
 	SmsTransferMesType      = "SmsTransferMesType"
 
+	SmsMesPrivateType         = "SmsMesPrivateType"
+	SmsTransferPrivateMesType = "SmsTransferPrivateMesType"
+
 	UserOffline = 1
 	UserOnline  = 2
 	UserBusy    = 3
@@ -17,6 +20,7 @@ const (
 	UserOrPasswordInvalid = 401
 	UserNotExist          = 402
 	UserRegisterExisted   = 403
+	UserNotOnline         = 404
 	ServerError           = 500
 )
 
@@ -59,4 +63,6 @@ type SmsMes struct {
 type SmsTransferMes struct {
 	User
 	Content string
+	Code    int    `json:"code"`
+	Error   string `json:error`
 }

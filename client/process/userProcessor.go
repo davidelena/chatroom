@@ -191,6 +191,8 @@ func serverProcessMes(conn net.Conn) {
 			updateUserStatus(&notifyUserStatusMes)
 		case message.SmsTransferMesType:
 			outputGroupMes(&mes)
+		case message.SmsTransferPrivateMesType:
+			outputPrivateMes(&mes)
 		default:
 			fmt.Println("不能识别相关的消息类型, mes.Type=", mes.Type)
 			return
